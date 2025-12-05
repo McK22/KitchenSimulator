@@ -31,15 +31,15 @@ void ACooker::OnBurnerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 	OverlappedComponent->SetGenerateOverlapEvents(false);
 
-	FTransform newTransform(
+	const FTransform NewTransform(
 		FQuat(FRotator(0.0f, Container->GetActorRotation().Yaw, 0.0f)),
 		OverlappedComponent->GetComponentLocation(),
-		FVector(1.0f)
+		Container->GetActorScale()
 	);
 	
 	Container->GetMeshComponent()->SetPhysicsLinearVelocity(FVector());
 	Container->GetMeshComponent()->SetPhysicsAngularVelocityInRadians(FVector());
-	Container->SetActorTransform(newTransform);
+	Container->SetActorTransform(NewTransform);
 	
 	OverlappedComponent->SetGenerateOverlapEvents(true);
 }
