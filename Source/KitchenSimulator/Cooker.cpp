@@ -37,8 +37,8 @@ void ACooker::OnBurnerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		Container->GetActorScale()
 	);
 	
-	Container->GetMeshComponent()->SetPhysicsLinearVelocity(FVector());
-	Container->GetMeshComponent()->SetPhysicsAngularVelocityInRadians(FVector());
+	Container->GetVisualMesh()->SetPhysicsLinearVelocity(FVector());
+	Container->GetVisualMesh()->SetPhysicsAngularVelocityInRadians(FVector());
 	Container->SetActorTransform(NewTransform);
 	
 	OverlappedComponent->SetGenerateOverlapEvents(true);
