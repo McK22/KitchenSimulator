@@ -20,26 +20,3 @@ void ACooker::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-void ACooker::OnBurnerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor)
-{
-	ACookableContainer* Container = Cast<ACookableContainer>(OtherActor);
-	if (!Container)
-	{
-		return;
-	}
-
-	OverlappedComponent->SetGenerateOverlapEvents(false);
-
-	const FTransform NewTransform(
-		FQuat(FRotator(0.0f, Container->GetActorRotation().Yaw, 0.0f)),
-		OverlappedComponent->GetComponentLocation(),
-		Container->GetActorScale()
-	);
-	
-	Container->GetVisualMesh()->SetPhysicsLinearVelocity(FVector());
-	Container->GetVisualMesh()->SetPhysicsAngularVelocityInRadians(FVector());
-	Container->SetActorTransform(NewTransform);
-	
-	OverlappedComponent->SetGenerateOverlapEvents(true);
-}

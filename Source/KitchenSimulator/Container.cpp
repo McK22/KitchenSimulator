@@ -55,44 +55,30 @@ void AContainer::AddIngredient(AIngredient* Ingredient)
 }
 
 void AContainer::OnAddIngredientAreaBeginOverlap(
-		UPrimitiveComponent* OverlappedComp,
+		UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
+		UPrimitiveComponent* OtherComponent,
 		int32 OtherBodyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult
 	)
 {
-	AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
-	if (Ingredient)
+	if (AIngredient* Ingredient = Cast<AIngredient>(OtherActor))
 	{
 		AddIngredient(Ingredient);
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			5.0f,
-			FColor::Yellow,
-			FString::Printf(TEXT("Added, current size: %d"), Ingredients.Num())
-		);
 	}
 }
 
 void AContainer::OnAddIngredientAreaEndOverlap(
-		UPrimitiveComponent* OverlappedComp,
+		UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
+		UPrimitiveComponent* OtherComponent,
 		int32 OtherBodyIndex
 	)
 {
-	AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
-	if (Ingredient)
+	if (AIngredient* Ingredient = Cast<AIngredient>(OtherActor))
 	{
 		Ingredients.Remove(Ingredient);
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			5.0f,
-			FColor::Yellow,
-			FString::Printf(TEXT("Removed, current size: %d"), Ingredients.Num())
-		);
 	}
 }
 

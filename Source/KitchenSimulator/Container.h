@@ -17,7 +17,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Container content")
 	void AddIngredient(AIngredient* Ingredient);
 
-	UFUNCTION(BlueprintPure, Category = "Container components")
+	UFUNCTION(BlueprintPure, Category = "Components")
 	UStaticMeshComponent* GetVisualMesh() const { return VisualMesh; }
 
 protected:
@@ -26,9 +26,9 @@ protected:
 
 	UFUNCTION()
 	void OnAddIngredientAreaBeginOverlap(
-		UPrimitiveComponent* OverlappedComp,
+		UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
+		UPrimitiveComponent* OtherComponent,
 		int32 OtherBodyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult
@@ -36,13 +36,13 @@ protected:
 	
 	UFUNCTION()
 	void OnAddIngredientAreaEndOverlap(
-		UPrimitiveComponent* OverlappedComp,
+		UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
+		UPrimitiveComponent* OtherComponent,
 		int32 OtherBodyIndex
 	);
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container content")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* VisualMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container content")

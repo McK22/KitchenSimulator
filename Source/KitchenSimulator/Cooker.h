@@ -17,9 +17,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Manage containers | Pull a container")
-	void OnBurnerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor);
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
