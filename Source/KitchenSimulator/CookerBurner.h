@@ -14,6 +14,9 @@ public:
 	// Sets default values for this component's properties
 	UCookerBurner();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Burner state")
+	bool IsOn;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
