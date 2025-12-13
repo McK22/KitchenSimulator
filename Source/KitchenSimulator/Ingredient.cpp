@@ -22,3 +22,7 @@ void AIngredient::Tick(float DeltaTime)
 
 }
 
+void AIngredient::Cook_Implementation(float DeltaTime)
+{
+	CookingTime += DeltaTime;
+}

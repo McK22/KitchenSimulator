@@ -16,6 +16,9 @@ public:
 	// Sets default values for this actor's properties
 	ACookableContainer();
 
+	UFUNCTION(BlueprintCallable, Category = "Container state")
+	void UpdateCooking(float DeltaTime);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

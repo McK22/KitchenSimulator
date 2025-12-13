@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CookableContainer.h"
 #include "Components/SceneComponent.h"
 #include "CookerBurner.generated.h"
 
@@ -17,6 +18,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Burner state")
 	bool IsOn;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Burner state")
+	ACookableContainer* Container;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -29,6 +33,14 @@ protected:
 		int32 OtherBodyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult
+	);
+	
+	UFUNCTION()
+	void OnBurnerEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex
 	);
 
 public:	

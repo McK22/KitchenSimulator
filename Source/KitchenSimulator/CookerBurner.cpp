@@ -9,6 +9,7 @@ UCookerBurner::UCookerBurner()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	OnComponentBeginOverlap.AddDynamic(this, &UCookerBurner::OnBurnerBeginOverlap);
+	OnComponentEndOverlap.AddDynamic(this, &UCookerBurner::OnBurnerEndOverlap);
 	SetHiddenInGame(true);
 	// ...
 }
@@ -28,8 +29,10 @@ void UCookerBurner::BeginPlay()
 void UCookerBurner::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	if (IsOn && Container)
+	{
+		Container->UpdateCooking(DeltaTime);
+	}
 }
 
 void UCookerBurner::OnBurnerBeginOverlap(
@@ -41,12 +44,14 @@ void UCookerBurner::OnBurnerBeginOverlap(
 		const FHitResult& SweepResult
 	)
 {
-	ACookableContainer* Container = Cast<ACookableContainer>(OtherActor);
-	if (!Container)
+	ACookableContainer* OverlappingContainer = Cast<ACookableContainer>(OtherActor);
+	if (!OverlappingContainer)
 	{
 		return;
 	}
 
+	Container = OverlappingContainer;
+	
 	OverlappedComponent->SetGenerateOverlapEvents(false);
 
 	const FTransform NewTransform(
@@ -60,4 +65,17 @@ void UCookerBurner::OnBurnerBeginOverlap(
 	Container->SetActorTransform(NewTransform);
 	
 	OverlappedComponent->SetGenerateOverlapEvents(true);
+}
+
+void UCookerBurner::OnBurnerEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex
+	)
+{
+	if (OtherActor == Container)
+	{
+		Container = nullptr;
+	}		
 }

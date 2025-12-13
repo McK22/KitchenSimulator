@@ -25,3 +25,10 @@ void ACookableContainer::Tick(float DeltaTime)
 
 }
 
+void ACookableContainer::UpdateCooking(float DeltaTime)
+{
+	for (AIngredient* Ingredient : Ingredients)
+	{
+		Ingredient->Cook(DeltaTime);
+	}
+}
