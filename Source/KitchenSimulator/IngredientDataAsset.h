@@ -33,6 +33,9 @@ class KITCHENSIMULATOR_API UIngredientDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ingredient id")
+	int Id;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ingredient States")
 	TMap<EIngredientState, UStaticMesh*> Meshes;
 
@@ -41,4 +44,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ingredient Image")
 	TSoftObjectPtr<UTexture2D> Image;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ingredient appearence")
+	TSoftObjectPtr<UTexture2D> LiquidTexture;
 };

@@ -1,5 +1,7 @@
 #include "Container.h"
 
+#include "VectorTypes.h"
+
 // Sets default values
 AContainer::AContainer()
 {
@@ -10,6 +12,11 @@ AContainer::AContainer()
 	VisualMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
 	VisualMesh->SetSimulatePhysics(true);
 	SetRootComponent(VisualMesh);
+
+	LiquidIngredientsMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Liquid Ingredients Mesh"));
+	LiquidIngredientsMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	// LiquidIngredientsMesh->SetWorldScale3D({0.0f, 0.0f, 0.0f});
+	LiquidIngredientsMesh->SetupAttachment(RootComponent);
 
 	AddIngredientArea = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Add Ingredient Area"));
 	AddIngredientArea->SetCollisionProfileName(TEXT("OverlapAll"));
@@ -52,6 +59,31 @@ void AContainer::AddIngredient(AIngredient* Ingredient)
 		true
 	);
 	Ingredient->AttachToActor(this, AttachmentRules, NAME_None);
+}
+
+void AContainer::AddLiquidIngredient(const FIngredientStruct Ingredient, const float AmountLiters)
+{
+	if (!LiquidIngredients.Contains(Ingredient.IngredientData))
+	{
+		LiquidIngredients.Add(Ingredient.IngredientData, 0.0f);
+	}
+	
+	LiquidIngredients[Ingredient.IngredientData] += AmountLiters;
+
+	FVector Location = LiquidIngredientsMesh->GetRelativeLocation();
+	Location.Z = FMath::Lerp(MinLiquidHeight, MaxLiquidHeight, GetLiquidFill() / CapacityLiters);
+	LiquidIngredientsMesh->SetRelativeLocation(Location);
+}
+
+float AContainer::GetLiquidFill()
+{
+	float Result = 0.0f;
+	for (auto Entry : LiquidIngredients)
+	{
+		Result += Entry.Value;
+	}
+
+	return Result;
 }
 
 void AContainer::OnAddIngredientAreaBeginOverlap(

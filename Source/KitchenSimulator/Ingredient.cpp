@@ -39,7 +39,9 @@ bool AIngredient::SetState(EIngredientState NewState)
 
 bool AIngredient::TryMakeTransition(EIngredientState NewState)
 {
-	if (!IngredientData || !IngredientData->Transitions[State].AllowedStates.Contains(NewState))
+	if (!IngredientData
+		|| !IngredientData->Transitions.Contains(State)
+		|| !IngredientData->Transitions[State].AllowedStates.Contains(NewState))
 	{
 		return false;
 	}

@@ -5,6 +5,18 @@
 #include "GameFramework/Actor.h"
 #include "Ingredient.generated.h"
 
+USTRUCT(BlueprintType)
+struct FIngredientStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	EIngredientState State = EIngredientState::Whole;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta=(ExposeOnSpawn="true"))
+	UIngredientDataAsset* IngredientData;
+};
+
 UCLASS()
 class KITCHENSIMULATOR_API AIngredient : public AActor
 {
