@@ -80,6 +80,7 @@ void AContainer::AddIngredient(AIngredient* Ingredient)
 		Ingredient->GetActorLocation().Y,
 		AddIngredientArea->GetComponentLocation().Z
 	);
+	Ingredient->DisableCollision();
 	Ingredient->SetActorLocation(NewLocation);
 	Ingredient->SetActorRotation({0.0, Ingredient->GetActorRotation().Yaw, 0.0});
 
@@ -172,6 +173,7 @@ void AContainer::OnAddIngredientAreaEndOverlap(
 	if (AIngredient* Ingredient = Cast<AIngredient>(OtherActor))
 	{
 		Ingredients.Remove(Ingredient);
+		Ingredient->EnableCollision();
 	}
 }
 

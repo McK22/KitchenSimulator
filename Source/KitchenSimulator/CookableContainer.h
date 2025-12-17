@@ -22,9 +22,17 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	float ScrambledEggsCookingTime = 10.0f;
+	float ScrambledEggsBasicAmount = 0.240f;
+	TObjectPtr<UIngredientDataAsset> EggDataAsset;
+	TSubclassOf<AIngredient> IngredientBlueprintClass;
 	
 	UPROPERTY(BlueprintReadWrite, Category = "Container components")
 	UStaticMeshComponent* MeshComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Container content")
+	float LiquidsCookingTime = 0.0f;
 
 public:	
 	// Called every frame

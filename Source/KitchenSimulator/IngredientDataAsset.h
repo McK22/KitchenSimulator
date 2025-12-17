@@ -11,7 +11,8 @@ enum class EIngredientState : uint8
 {
 	Whole UMETA(DisplayName="Whole"),
 	Cracked UMETA(DisplayName="Cracked"),
-	Cut UMETA(DisplayName="Cut")
+	Cut UMETA(DisplayName="Cut"),
+	Scrambled UMETA(DisplayName="Scrambled")
 };
 
 USTRUCT(BlueprintType)

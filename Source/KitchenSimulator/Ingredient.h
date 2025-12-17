@@ -5,6 +5,8 @@
 #include "GameFramework/Actor.h"
 #include "Ingredient.generated.h"
 
+class ACookableContainer;
+
 USTRUCT(BlueprintType)
 struct FIngredientStruct
 {
@@ -26,6 +28,9 @@ public:
 	// Sets default values for this actor's properties
 	AIngredient();
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data", meta=(ExposeOnSpawn="true"))
+	UIngredientDataAsset* IngredientData;
+	
 	UFUNCTION(BlueprintCallable, Category = "State")
 	bool TryMakeTransition(EIngredientState NewState);
 
@@ -34,6 +39,12 @@ public:
 
 	void Cook_Implementation(float DeltaTime);
 
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	void DisableCollision() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	void EnableCollision() const;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -43,9 +54,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "State")
 	EIngredientState State = EIngredientState::Whole;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data", meta=(ExposeOnSpawn="true"))
-	UIngredientDataAsset* IngredientData;
 	
 	// Cooking time in seconds
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
@@ -60,5 +68,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
+friend ACookableContainer;
 };

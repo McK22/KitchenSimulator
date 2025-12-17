@@ -55,3 +55,15 @@ void AIngredient::Cook_Implementation(float DeltaTime)
 {
 	CookingTime += DeltaTime;
 }
+
+void AIngredient::DisableCollision() const
+{
+	Mesh->SetCollisionProfileName("OverlapAll");
+	Mesh->SetSimulatePhysics(false);
+}
+
+void AIngredient::EnableCollision() const
+{
+	Mesh->SetCollisionProfileName("BlockAllDynamic");
+	Mesh->SetSimulatePhysics(true);
+}

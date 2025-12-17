@@ -36,6 +36,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	const FName TotalLiquidParameterName = "TotalLiquidAmount";
+	const FName LiquidCookingProgressParameterName = "CookingProgress";
 	const TMap<FName, FName> LiquidParameterNames = {
 		{ "DA_Egg", "EggAmount" }
 	};
