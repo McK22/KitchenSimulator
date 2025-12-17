@@ -14,39 +14,31 @@ public:
 	// Sets default values for this actor's properties
 	AContainer();
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Actions")
+	float PourRate = 0.06f;
+
 	UFUNCTION(BlueprintCallable, Category = "Container content")
 	void AddIngredient(AIngredient* Ingredient);
 
 	UFUNCTION(BlueprintCallable, Category = "Container content")
-	void AddLiquidIngredient(FIngredientStruct Ingredient, float AmountLiters);
+	void AddLiquidIngredient(UIngredientDataAsset* Ingredient, float AmountLiters);
 
 	UFUNCTION(BlueprintPure, Category = "Components")
 	UStaticMeshComponent* GetVisualMesh() const { return VisualMesh; }
 
 	UFUNCTION(BlueprintCallable, Category = "Container content")
-	float GetLiquidFill();
+	float GetLiquidFill() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	AContainer* GetContainerBelow() const;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UFUNCTION()
-	void OnAddIngredientAreaBeginOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComponent,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult
-	);
-	
-	UFUNCTION()
-	void OnAddIngredientAreaEndOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComponent,
-		int32 OtherBodyIndex
-	);
+	const FName TotalLiquidParameterName = "TotalLiquidAmount";
+	const TMap<FName, FName> LiquidParameterNames = {
+		{ "DA_Egg", "EggAmount" }
+	};
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* VisualMesh;
@@ -71,6 +63,33 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container content")
 	float CapacityLiters;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Container content")
+	UMaterialInstanceDynamic* LiquidMaterialInstance;
+
+	UFUNCTION()
+	void OnAddIngredientAreaBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
+	
+	UFUNCTION()
+	void OnAddIngredientAreaEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex
+	);
+
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	bool IsRotatedDown() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Container content")
+	void UpdateLiquidMeshPosition() const;
 
 public:	
 	// Called every frame

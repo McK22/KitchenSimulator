@@ -1,6 +1,7 @@
 #include "Container.h"
 
 #include "VectorTypes.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AContainer::AContainer()
@@ -27,12 +28,14 @@ AContainer::AContainer()
 // Called when the game starts or when spawned
 void AContainer::BeginPlay()
 {
-	Super::BeginPlay();
 	if (AddIngredientArea)
 	{
 		AddIngredientArea->OnComponentBeginOverlap.AddDynamic(this, &AContainer::OnAddIngredientAreaBeginOverlap);
 		AddIngredientArea->OnComponentEndOverlap.AddDynamic(this, &AContainer::OnAddIngredientAreaEndOverlap);
 	}
+	
+	LiquidMaterialInstance = LiquidIngredientsMesh->CreateDynamicMaterialInstance(0);
+	Super::BeginPlay();
 }
 
 // Called every frame
@@ -40,11 +43,39 @@ void AContainer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsRotatedDown())
+	{
+		const float LiquidAmountToRemove = PourRate * DeltaTime;
+		const float TotalLiquidAmount = GetLiquidFill();
+		const float Ratio = LiquidAmountToRemove / TotalLiquidAmount;
+		if (AContainer* ContainerBelow = GetContainerBelow())
+		{
+			for (auto& Liquid : LiquidIngredients)
+			{
+				float CurrentAmountToRemove = Liquid.Value * Ratio;
+				CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value);
+				Liquid.Value -= CurrentAmountToRemove;
+				ContainerBelow->AddLiquidIngredient(Liquid.Key, CurrentAmountToRemove);
+			}
+		}
+		else
+		{
+			for (auto& Liquid : LiquidIngredients)
+			{
+				float CurrentAmountToRemove = Liquid.Value * Ratio;
+				CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value);
+				Liquid.Value -= CurrentAmountToRemove;
+			}
+		}
+
+		UpdateLiquidMeshPosition();
+	}
 }
+
 void AContainer::AddIngredient(AIngredient* Ingredient)
 {
 	Ingredients.Add(Ingredient);
-	FVector NewLocation = FVector(
+	const FVector NewLocation = FVector(
 		Ingredient->GetActorLocation().X,
 		Ingredient->GetActorLocation().Y,
 		AddIngredientArea->GetComponentLocation().Z
@@ -52,7 +83,7 @@ void AContainer::AddIngredient(AIngredient* Ingredient)
 	Ingredient->SetActorLocation(NewLocation);
 	Ingredient->SetActorRotation({0.0, Ingredient->GetActorRotation().Yaw, 0.0});
 
-	FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(
+	const FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(
 		EAttachmentRule::KeepWorld,
 		EAttachmentRule::KeepWorld,
 		EAttachmentRule::KeepWorld,
@@ -61,30 +92,60 @@ void AContainer::AddIngredient(AIngredient* Ingredient)
 	Ingredient->AttachToActor(this, AttachmentRules, NAME_None);
 }
 
-void AContainer::AddLiquidIngredient(const FIngredientStruct Ingredient, const float AmountLiters)
+void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, const float AmountLiters)
 {
-	if (!LiquidIngredients.Contains(Ingredient.IngredientData))
+	if (!LiquidIngredients.Contains(Ingredient))
 	{
-		LiquidIngredients.Add(Ingredient.IngredientData, 0.0f);
+		LiquidIngredients.Add(Ingredient, 0.0f);
 	}
 	
-	LiquidIngredients[Ingredient.IngredientData] += AmountLiters;
+	LiquidIngredients[Ingredient] += AmountLiters;
 
-	FVector Location = LiquidIngredientsMesh->GetRelativeLocation();
-	Location.Z = FMath::Lerp(MinLiquidHeight, MaxLiquidHeight, GetLiquidFill() / CapacityLiters);
-	LiquidIngredientsMesh->SetRelativeLocation(Location);
+	const float LiquidFill = GetLiquidFill();
+	LiquidMaterialInstance->SetScalarParameterValue(TotalLiquidParameterName, LiquidFill);
+	LiquidMaterialInstance->SetScalarParameterValue(
+		LiquidParameterNames[FName(*UKismetSystemLibrary::GetDisplayName(Ingredient))],
+		LiquidFill
+	);
+
+	UpdateLiquidMeshPosition();
 }
 
-float AContainer::GetLiquidFill()
+float AContainer::GetLiquidFill() const
 {
 	float Result = 0.0f;
-	for (auto Entry : LiquidIngredients)
+	for (const auto Entry : LiquidIngredients)
 	{
 		Result += Entry.Value;
 	}
 
 	return Result;
 }
+
+AContainer* AContainer::GetContainerBelow() const
+{
+	FHitResult HitResult;
+	const FVector Start = GetActorLocation();
+	const FVector End = Start + (FVector::DownVector * 400.0f);
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	const bool Hit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		Start,
+		End,
+		ECC_Visibility,
+		Params
+	);
+
+	if (Hit)
+	{
+		return Cast<AContainer>(HitResult.GetActor());
+	}
+
+	return nullptr;
+}
+
 
 void AContainer::OnAddIngredientAreaBeginOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -114,3 +175,16 @@ void AContainer::OnAddIngredientAreaEndOverlap(
 	}
 }
 
+bool AContainer::IsRotatedDown() const
+{
+	const FRotator Rotation = GetActorRotation();
+	return abs(Rotation.Pitch) > 90.0f || abs(Rotation.Roll) > 90.0f;
+}
+
+void AContainer::UpdateLiquidMeshPosition() const
+{
+	const float LiquidFill = GetLiquidFill();
+	FVector Location = LiquidIngredientsMesh->GetRelativeLocation();
+	Location.Z = FMath::Lerp(MinLiquidHeight, MaxLiquidHeight, LiquidFill / CapacityLiters);
+	LiquidIngredientsMesh->SetRelativeLocation(Location);
+}
