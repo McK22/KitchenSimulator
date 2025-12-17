@@ -59,11 +59,13 @@ void AIngredient::Cook_Implementation(float DeltaTime)
 void AIngredient::DisableCollision() const
 {
 	Mesh->SetCollisionProfileName("OverlapAll");
+	Mesh->SetEnableGravity(false);
 	Mesh->SetSimulatePhysics(false);
 }
 
 void AIngredient::EnableCollision() const
 {
 	Mesh->SetCollisionProfileName("BlockAllDynamic");
+	Mesh->SetEnableGravity(true);
 	Mesh->SetSimulatePhysics(true);
 }

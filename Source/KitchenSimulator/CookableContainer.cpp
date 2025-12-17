@@ -48,7 +48,7 @@ void ACookableContainer::UpdateCooking(float DeltaTime)
 		LiquidsCookingTime += DeltaTime;
 		if (LiquidsCookingTime >= ScrambledEggsCookingTime)
 		{
-			const FTransform Transform = GetActorTransform();
+			const FTransform Transform(AddIngredientArea->GetComponentLocation());
 			AIngredient* Ingredient = GetWorld()->SpawnActorDeferred<AIngredient>(
 				IngredientBlueprintClass,
 				Transform,
@@ -65,6 +65,7 @@ void ACookableContainer::UpdateCooking(float DeltaTime)
 			}
 			LiquidsCookingTime = 0.0f;
 			LiquidIngredients.Empty();
+			UpdateLiquidMeshPosition();
 		}
 	}
 }

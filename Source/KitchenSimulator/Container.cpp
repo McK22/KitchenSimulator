@@ -35,6 +35,7 @@ void AContainer::BeginPlay()
 	}
 	
 	LiquidMaterialInstance = LiquidIngredientsMesh->CreateDynamicMaterialInstance(0);
+	UpdateLiquidMeshPosition();
 	Super::BeginPlay();
 }
 
@@ -80,7 +81,7 @@ void AContainer::AddIngredient(AIngredient* Ingredient)
 		Ingredient->GetActorLocation().Y,
 		AddIngredientArea->GetComponentLocation().Z
 	);
-	Ingredient->DisableCollision();
+	// Ingredient->DisableCollision();
 	Ingredient->SetActorLocation(NewLocation);
 	Ingredient->SetActorRotation({0.0, Ingredient->GetActorRotation().Yaw, 0.0});
 
@@ -173,7 +174,7 @@ void AContainer::OnAddIngredientAreaEndOverlap(
 	if (AIngredient* Ingredient = Cast<AIngredient>(OtherActor))
 	{
 		Ingredients.Remove(Ingredient);
-		Ingredient->EnableCollision();
+		// Ingredient->EnableCollision();
 	}
 }
 
@@ -186,6 +187,13 @@ bool AContainer::IsRotatedDown() const
 void AContainer::UpdateLiquidMeshPosition() const
 {
 	const float LiquidFill = GetLiquidFill();
+	const bool Visible = LiquidFill > 1e-4;
+	LiquidIngredientsMesh->SetVisibility(Visible);
+	if (!Visible)
+	{
+		return;
+	}
+	
 	FVector Location = LiquidIngredientsMesh->GetRelativeLocation();
 	Location.Z = FMath::Lerp(MinLiquidHeight, MaxLiquidHeight, LiquidFill / CapacityLiters);
 	LiquidIngredientsMesh->SetRelativeLocation(Location);
