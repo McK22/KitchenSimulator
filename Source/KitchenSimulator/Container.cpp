@@ -107,7 +107,7 @@ void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, const flo
 	LiquidMaterialInstance->SetScalarParameterValue(TotalLiquidParameterName, LiquidFill);
 	LiquidMaterialInstance->SetScalarParameterValue(
 		LiquidParameterNames[FName(*UKismetSystemLibrary::GetDisplayName(Ingredient))],
-		LiquidFill
+		LiquidIngredients[Ingredient]	
 	);
 
 	UpdateLiquidMeshPosition();

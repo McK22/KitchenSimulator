@@ -14,7 +14,7 @@ public:
 	// Sets default values for this actor's properties
 	AContainer();
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Actions")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Actions")
 	float PourRate = 0.06f;
 
 	UFUNCTION(BlueprintCallable, Category = "Container content")
@@ -39,7 +39,8 @@ protected:
 	const FName TotalLiquidParameterName = "TotalLiquidAmount";
 	const FName LiquidCookingProgressParameterName = "CookingProgress";
 	const TMap<FName, FName> LiquidParameterNames = {
-		{ "DA_Egg", "EggAmount" }
+		{ "DA_Egg", "EggAmount" },
+		{ "DA_Ketchup", "KetchupAmount" }
 	};
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
