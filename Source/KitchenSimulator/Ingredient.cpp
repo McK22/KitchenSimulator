@@ -32,6 +32,13 @@ bool AIngredient::SetState(EIngredientState NewState)
 	{
 		return false;
 	}
+
+	UStaticMesh* NewMesh = IngredientData->Meshes[NewState];
+	const int32 MaterialCount = NewMesh->GetStaticMaterials().Num();
+	for (int i = 0; i < MaterialCount; i++)
+	{
+		Mesh->SetMaterial(i, NewMesh->GetMaterial(i));
+	}
 	
 	State = NewState;
 	return true;
