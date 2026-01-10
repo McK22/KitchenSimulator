@@ -65,6 +65,12 @@ protected:
 	float MinLiquidHeight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container content")
+	float MinLiquidScale = 1.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container content")
+	float MaxLiquidScale = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container content")
 	float CapacityLiters;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Container content")

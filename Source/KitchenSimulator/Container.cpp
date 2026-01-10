@@ -94,8 +94,15 @@ void AContainer::AddIngredient(AIngredient* Ingredient)
 	Ingredient->AttachToActor(this, AttachmentRules, NAME_None);
 }
 
-void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, const float AmountLiters)
+void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, float AmountLiters)
 {
+	const float LiquidFill = GetLiquidFill();
+	AmountLiters = FMath::Min(CapacityLiters - LiquidFill, AmountLiters);
+	if (AmountLiters < 1e-6)
+	{
+		return;
+	}
+	
 	if (!LiquidIngredients.Contains(Ingredient))
 	{
 		LiquidIngredients.Add(Ingredient, 0.0f);
@@ -103,7 +110,6 @@ void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, const flo
 	
 	LiquidIngredients[Ingredient] += AmountLiters;
 
-	const float LiquidFill = GetLiquidFill();
 	LiquidMaterialInstance->SetScalarParameterValue(TotalLiquidParameterName, LiquidFill);
 	LiquidMaterialInstance->SetScalarParameterValue(
 		LiquidParameterNames[FName(*UKismetSystemLibrary::GetDisplayName(Ingredient))],
@@ -197,4 +203,10 @@ void AContainer::UpdateLiquidMeshPosition() const
 	FVector Location = LiquidIngredientsMesh->GetRelativeLocation();
 	Location.Z = FMath::Lerp(MinLiquidHeight, MaxLiquidHeight, LiquidFill / CapacityLiters);
 	LiquidIngredientsMesh->SetRelativeLocation(Location);
+
+	FVector Scale = LiquidIngredientsMesh->GetRelativeScale3D();
+	const float NewScale = FMath::Lerp(MinLiquidScale, MaxLiquidScale, LiquidFill / CapacityLiters);
+	Scale.X = NewScale;
+	Scale.Y = NewScale;
+	LiquidIngredientsMesh->SetRelativeScale3D(Scale);
 }
