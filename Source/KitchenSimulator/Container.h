@@ -38,10 +38,6 @@ protected:
 
 	const FName TotalLiquidParameterName = "TotalLiquidAmount";
 	const FName LiquidCookingProgressParameterName = "CookingProgress";
-	const TMap<FName, FName> LiquidParameterNames = {
-		{ "DA_Egg", "EggAmount" },
-		{ "DA_Ketchup", "KetchupAmount" }
-	};
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* VisualMesh;

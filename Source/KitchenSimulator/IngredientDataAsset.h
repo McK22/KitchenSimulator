@@ -49,4 +49,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ingredient appearence")
 	TSoftObjectPtr<UTexture2D> LiquidTexture;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ingredient Names")
+	FName LiquidMaterialParameterName;
 };

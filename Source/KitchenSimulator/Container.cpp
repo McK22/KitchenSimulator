@@ -112,7 +112,7 @@ void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, float Amo
 
 	LiquidMaterialInstance->SetScalarParameterValue(TotalLiquidParameterName, LiquidFill);
 	LiquidMaterialInstance->SetScalarParameterValue(
-		LiquidParameterNames[FName(*UKismetSystemLibrary::GetDisplayName(Ingredient))],
+		Ingredient->LiquidMaterialParameterName,
 		LiquidIngredients[Ingredient]	
 	);
 
