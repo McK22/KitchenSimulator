@@ -33,6 +33,11 @@ void AContainer::BeginPlay()
 		AddIngredientArea->OnComponentBeginOverlap.AddDynamic(this, &AContainer::OnAddIngredientAreaBeginOverlap);
 		AddIngredientArea->OnComponentEndOverlap.AddDynamic(this, &AContainer::OnAddIngredientAreaEndOverlap);
 	}
+
+	if (LiquidIngredientsMesh)
+	{
+		LiquidIngredientsMesh->OnComponentBeginOverlap.AddDynamic(this, &AContainer::OnLiquidIngredientBeginOverlap);
+	}
 	
 	LiquidMaterialInstance = LiquidIngredientsMesh->CreateDynamicMaterialInstance(0);
 	UpdateLiquidMeshPosition();
@@ -181,6 +186,30 @@ void AContainer::OnAddIngredientAreaEndOverlap(
 	{
 		Ingredients.Remove(Ingredient);
 		// Ingredient->EnableCollision();
+	}
+}
+
+void AContainer::OnLiquidIngredientBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	)
+{
+	if (AContainer* OtherContainer = Cast<AContainer>(OtherActor))
+	{
+		const float CurrentFill = GetLiquidFill();
+		const float LiquidToTransfer = FMath::Min(CurrentFill, OtherContainer->CapacityLiters - OtherContainer->GetLiquidFill());
+		const float Ratio = LiquidToTransfer / CurrentFill;
+		for (auto& Liquid : LiquidIngredients)
+		{
+			float CurrentAmountToRemove = Liquid.Value * Ratio;
+			CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value);
+			Liquid.Value -= CurrentAmountToRemove;
+			OtherContainer->AddLiquidIngredient(Liquid.Key, CurrentAmountToRemove);
+		}	
 	}
 }
 

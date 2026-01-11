@@ -72,6 +72,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Container content")
 	UMaterialInstanceDynamic* LiquidMaterialInstance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container type")
+	bool CanCollectLiquidFromOtherContainers;
+
 	UFUNCTION()
 	void OnAddIngredientAreaBeginOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -88,6 +91,16 @@ protected:
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent,
 		int32 OtherBodyIndex
+	);
+
+	UFUNCTION()
+	void OnLiquidIngredientBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
 	);
 
 	UFUNCTION(BlueprintCallable, Category = "Actions")
