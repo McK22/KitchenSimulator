@@ -15,7 +15,7 @@ AContainer::AContainer()
 	SetRootComponent(VisualMesh);
 
 	LiquidIngredientsMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Liquid Ingredients Mesh"));
-	LiquidIngredientsMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	LiquidIngredientsMesh->SetCollisionProfileName(TEXT("OverlapAll"));
 	// LiquidIngredientsMesh->SetWorldScale3D({0.0f, 0.0f, 0.0f});
 	LiquidIngredientsMesh->SetupAttachment(RootComponent);
 
@@ -198,13 +198,16 @@ void AContainer::OnLiquidIngredientBeginOverlap(
 		const FHitResult& SweepResult
 	)
 {
-	if (AContainer* OtherContainer = Cast<AContainer>(OtherActor))
+	AContainer* OtherContainer = Cast<AContainer>(OtherActor);
+	if (OtherContainer && OtherContainer->CanCollectLiquidFromOtherContainers)
 	{
 		const float CurrentFill = GetLiquidFill();
 		const float LiquidToTransfer = FMath::Min(CurrentFill, OtherContainer->CapacityLiters - OtherContainer->GetLiquidFill());
 		const float Ratio = LiquidToTransfer / CurrentFill;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("To pojawi się na ekranie!"));
 		for (auto& Liquid : LiquidIngredients)
 		{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("To pojawi się na ekranie!"));
 			float CurrentAmountToRemove = Liquid.Value * Ratio;
 			CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value);
 			Liquid.Value -= CurrentAmountToRemove;
