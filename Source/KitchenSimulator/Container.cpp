@@ -231,14 +231,12 @@ void AContainer::UpdateLiquidMeshPosition() const
 	{
 		return;
 	}
-	
+
+	const float Ratio = LiquidFill / CapacityLiters;
 	FVector Location = LiquidIngredientsMesh->GetRelativeLocation();
-	Location.Z = FMath::Lerp(MinLiquidHeight, MaxLiquidHeight, LiquidFill / CapacityLiters);
+	Location.Z = FMath::Lerp(MinLiquidHeight, MaxLiquidHeight, Ratio);
 	LiquidIngredientsMesh->SetRelativeLocation(Location);
 
-	FVector Scale = LiquidIngredientsMesh->GetRelativeScale3D();
-	const float NewScale = FMath::Lerp(MinLiquidScale, MaxLiquidScale, LiquidFill / CapacityLiters);
-	Scale.X = NewScale;
-	Scale.Y = NewScale;
-	LiquidIngredientsMesh->SetRelativeScale3D(Scale);
+	const FVector NewScale = FMath::Lerp(MinLiquidScale, MaxLiquidScale, Ratio);
+	LiquidIngredientsMesh->SetRelativeScale3D(NewScale);
 }
