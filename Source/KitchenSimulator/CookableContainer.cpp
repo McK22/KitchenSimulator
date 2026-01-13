@@ -35,6 +35,11 @@ void ACookableContainer::UpdateCooking(float DeltaTime)
 	{
 		Ingredient->Cook(DeltaTime);
 	}
+
+	for (auto& Entry : LiquidIngredients)
+	{
+		Entry.Value.CookingTime += DeltaTime;
+	}
 	
 	const float LiquidFill = GetLiquidFill();
 	if (LiquidFill > 0.0f)

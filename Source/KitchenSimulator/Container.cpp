@@ -112,13 +112,15 @@ void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, float Amo
 	{
 		LiquidIngredients.Add(Ingredient, {});
 	}
-	
-	LiquidIngredients[Ingredient].Amount += AmountLiters;
+
+	auto& [Amount, CookingTime] = LiquidIngredients[Ingredient];
+	CookingTime = Amount / (Amount + AmountLiters);
+	Amount += AmountLiters;
 
 	LiquidMaterialInstance->SetScalarParameterValue(TotalLiquidParameterName, LiquidFill);
 	LiquidMaterialInstance->SetScalarParameterValue(
 		Ingredient->LiquidMaterialParameterName,
-		LiquidIngredients[Ingredient].Amount
+		Amount
 	);
 
 	UpdateLiquidMeshPosition();
