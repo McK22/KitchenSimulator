@@ -58,9 +58,9 @@ void AContainer::Tick(float DeltaTime)
 		{
 			for (auto& Liquid : LiquidIngredients)
 			{
-				float CurrentAmountToRemove = Liquid.Value * Ratio;
-				CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value);
-				Liquid.Value -= CurrentAmountToRemove;
+				float CurrentAmountToRemove = Liquid.Value.Amount * Ratio;
+				CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value.Amount);
+				Liquid.Value.Amount -= CurrentAmountToRemove;
 				ContainerBelow->AddLiquidIngredient(Liquid.Key, CurrentAmountToRemove);
 			}
 		}
@@ -68,9 +68,9 @@ void AContainer::Tick(float DeltaTime)
 		{
 			for (auto& Liquid : LiquidIngredients)
 			{
-				float CurrentAmountToRemove = Liquid.Value * Ratio;
-				CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value);
-				Liquid.Value -= CurrentAmountToRemove;
+				float CurrentAmountToRemove = Liquid.Value.Amount * Ratio;
+				CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value.Amount);
+				Liquid.Value.Amount -= CurrentAmountToRemove;
 			}
 		}
 
@@ -110,15 +110,15 @@ void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, float Amo
 	
 	if (!LiquidIngredients.Contains(Ingredient))
 	{
-		LiquidIngredients.Add(Ingredient, 0.0f);
+		LiquidIngredients.Add(Ingredient, {});
 	}
 	
-	LiquidIngredients[Ingredient] += AmountLiters;
+	LiquidIngredients[Ingredient].Amount += AmountLiters;
 
 	LiquidMaterialInstance->SetScalarParameterValue(TotalLiquidParameterName, LiquidFill);
 	LiquidMaterialInstance->SetScalarParameterValue(
 		Ingredient->LiquidMaterialParameterName,
-		LiquidIngredients[Ingredient]	
+		LiquidIngredients[Ingredient].Amount
 	);
 
 	UpdateLiquidMeshPosition();
@@ -129,7 +129,7 @@ float AContainer::GetLiquidFill() const
 	float Result = 0.0f;
 	for (const auto Entry : LiquidIngredients)
 	{
-		Result += Entry.Value;
+		Result += Entry.Value.Amount;
 	}
 
 	return Result;
@@ -208,9 +208,9 @@ void AContainer::OnLiquidIngredientBeginOverlap(
 		for (auto& Liquid : LiquidIngredients)
 		{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("To pojawi się na ekranie!"));
-			float CurrentAmountToRemove = Liquid.Value * Ratio;
-			CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value);
-			Liquid.Value -= CurrentAmountToRemove;
+			float CurrentAmountToRemove = Liquid.Value.Amount * Ratio;
+			CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value.Amount);
+			Liquid.Value.Amount -= CurrentAmountToRemove;
 			OtherContainer->AddLiquidIngredient(Liquid.Key, CurrentAmountToRemove);
 		}	
 	}

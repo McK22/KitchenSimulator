@@ -5,6 +5,14 @@
 #include "GameFramework/Actor.h"
 #include "Container.generated.h"
 
+USTRUCT()
+struct FLiquidIngredient
+{
+	GENERATED_BODY()
+	float Amount = 0.0f;
+	float CookingTime = 0.0f;
+};
+
 UCLASS()
 class KITCHENSIMULATOR_API AContainer : public AActor
 {
@@ -52,7 +60,7 @@ protected:
 	TArray<AIngredient*> Ingredients;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Container content")
-	TMap<UIngredientDataAsset*, float> LiquidIngredients;
+	TMap<UIngredientDataAsset*, FLiquidIngredient> LiquidIngredients;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container content")
 	float MinLiquidHeight;
