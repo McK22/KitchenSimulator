@@ -25,8 +25,10 @@ protected:
 
 	float ScrambledEggsCookingTime = 10.0f;
 	float ScrambledEggsBasicAmount = 0.240f;
-	TObjectPtr<UIngredientDataAsset> EggDataAsset;
 	TSubclassOf<AIngredient> IngredientBlueprintClass;
+
+	UPROPERTY()
+	TObjectPtr<UIngredientDataAsset> EggDataAsset;
 	
 	UPROPERTY(BlueprintReadWrite, Category = "Container components")
 	UStaticMeshComponent* MeshComponent;
