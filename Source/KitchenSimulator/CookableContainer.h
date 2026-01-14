@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Container.h"
+#include "CookingLiquidDataAsset.h"
 #include "GameFramework/Actor.h"
 #include "CookableContainer.generated.h"
 
@@ -23,18 +24,22 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	float ScrambledEggsCookingTime = 10.0f;
-	float ScrambledEggsBasicAmount = 0.240f;
 	TSubclassOf<AIngredient> IngredientBlueprintClass;
 
-	UPROPERTY()
-	TObjectPtr<UIngredientDataAsset> EggDataAsset;
-	
 	UPROPERTY(BlueprintReadWrite, Category = "Container components")
 	UStaticMeshComponent* MeshComponent;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Container content")
-	float LiquidsCookingTime = 0.0f;
+	UPROPERTY()
+	TObjectPtr<UCookingLiquidDataAsset> CookingLiquidDataAsset;
+
+	UFUNCTION()
+	void CheckForCookedLiquids();
+
+	UFUNCTION()
+	float GetLiquidsCookingTime();
+
+	UFUNCTION()
+	void SpawnIngredient(UIngredientDataAsset* IngredientDataAsset, EIngredientState IngredientState);
 
 public:	
 	// Called every frame

@@ -6,7 +6,7 @@
 #include "Container.generated.h"
 
 USTRUCT()
-struct FLiquidIngredient
+struct FLiquidIngredientStruct
 {
 	GENERATED_BODY()
 	float Amount = 0.0f;
@@ -59,8 +59,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Container content")
 	TArray<AIngredient*> Ingredients;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Container content")
-	TMap<UIngredientDataAsset*, FLiquidIngredient> LiquidIngredients;
+	UPROPERTY(EditAnywhere, Category = "Container content")
+	TMap<UIngredientDataAsset*, FLiquidIngredientStruct> LiquidIngredients;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container content")
 	float MinLiquidHeight;

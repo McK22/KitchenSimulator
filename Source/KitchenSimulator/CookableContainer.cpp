@@ -8,8 +8,14 @@ ACookableContainer::ACookableContainer()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	static ConstructorHelpers::FObjectFinder<UIngredientDataAsset> EggDataAssetObject(TEXT("/Game/DataAssets/Ingredients/DA_Egg.DA_Egg"));
-	EggDataAsset = EggDataAssetObject.Object;
+	// static ConstructorHelpers::FObjectFinder<UIngredientDataAsset> EggDataAssetObject(TEXT("/Game/DataAssets/Ingredients/DA_Egg.DA_Egg"));
+	// EggDataAsset = EggDataAssetObject.Object;
+	//
+	// static ConstructorHelpers::FObjectFinder<UIngredientDataAsset> PancakeDataAssetObject(TEXT("/Game/DataAssets/Ingredients/DA_Pancake.DA_Pancake"));
+	// PancakeDataAsset = PancakeDataAssetObject.Object;
+	//
+	static ConstructorHelpers::FObjectFinder<UCookingLiquidDataAsset> CookingLiquidDataAssetObject(TEXT("/Game/DataAssets/DA_CookingLiquid.DA_CookingLiquid"));
+	CookingLiquidDataAsset = CookingLiquidDataAssetObject.Object;
 
 	static ConstructorHelpers::FClassFinder<AIngredient> IngredientBp(TEXT("/Game/Ingredients/BP_Ingredient.BP_Ingredient_C"));
 	IngredientBlueprintClass = IngredientBp.Class;
@@ -26,7 +32,6 @@ void ACookableContainer::BeginPlay()
 void ACookableContainer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ACookableContainer::UpdateCooking(float DeltaTime)
@@ -41,36 +46,83 @@ void ACookableContainer::UpdateCooking(float DeltaTime)
 		Entry.Value.CookingTime += DeltaTime;
 	}
 	
-	const float LiquidFill = GetLiquidFill();
-	if (LiquidFill > 0.0f)
+	if (GetLiquidFill() > 0.0f)
 	{
-		
-		LiquidMaterialInstance->SetScalarParameterValue(
-			LiquidCookingProgressParameterName,
-			LiquidsCookingTime / ScrambledEggsCookingTime
-		);
-		
-		LiquidsCookingTime += DeltaTime;
-		if (LiquidsCookingTime >= ScrambledEggsCookingTime)
-		{
-			const FTransform Transform(AddIngredientArea->GetComponentLocation());
-			AIngredient* Ingredient = GetWorld()->SpawnActorDeferred<AIngredient>(
-				IngredientBlueprintClass,
-				Transform,
-				this,
-				GetInstigator()
-			);
+		CheckForCookedLiquids();
+	}
+}
 
-			if (Ingredient)
+void ACookableContainer::CheckForCookedLiquids()
+{
+	const float LiquidsCookingTime = GetLiquidsCookingTime();
+	const float LiquidIngredientsFill = GetLiquidFill();
+	for (const auto& Recipe : CookingLiquidDataAsset->Recipes)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("CookingTime: %f"), LiquidsCookingTime));
+		if (LiquidsCookingTime < Recipe.CookingTime)
+		{
+			continue;
+		}
+
+		bool IngredientsOk = true;
+		for (const auto& Ingredient : Recipe.Ingredients)
+		{
+			if (!LiquidIngredients.Contains(Ingredient.Ingredient))
 			{
-				Ingredient->IngredientData = EggDataAsset;
-				Ingredient->SetState(EIngredientState::Scrambled);
-				Ingredient->FinishSpawning(Transform);
-				AddIngredient(Ingredient);
+				if (Ingredient.Min > 0.0f)
+				{
+					IngredientsOk = false;
+					break;
+				}
+
+				continue;
 			}
-			LiquidsCookingTime = 0.0f;
-			LiquidIngredients.Empty();
-			UpdateLiquidMeshPosition();
+			
+			const float IngredientAmount = LiquidIngredients[Ingredient.Ingredient].Amount / LiquidIngredientsFill;
+			if (IngredientAmount < Ingredient.Min || IngredientAmount > Ingredient.Max)
+			{
+				IngredientsOk = false;
+				break;
+			}
+		}
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Ok: %d"), IngredientsOk));
+		if (IngredientsOk)
+		{
+			SpawnIngredient(Recipe.ResultIngredient, Recipe.ResultIngredientState);
 		}
 	}
+}
+
+float ACookableContainer::GetLiquidsCookingTime()
+{
+	float Total = 0.0f;
+	for (const auto& Entry : LiquidIngredients)
+	{
+		Total += Entry.Value.CookingTime * Entry.Value.Amount;
+	}
+
+	return Total / GetLiquidFill();
+}
+
+void ACookableContainer::SpawnIngredient(UIngredientDataAsset* IngredientDataAsset, EIngredientState IngredientState)
+{
+	const FTransform Transform(AddIngredientArea->GetComponentLocation());
+	AIngredient* Ingredient = GetWorld()->SpawnActorDeferred<AIngredient>(
+		IngredientBlueprintClass,
+		Transform,
+		this,
+		GetInstigator()
+	);
+
+	if (Ingredient)
+	{
+		Ingredient->IngredientData = IngredientDataAsset;
+		Ingredient->SetState(IngredientState);
+		Ingredient->FinishSpawning(Transform);
+		AddIngredient(Ingredient);
+	}
+	
+	LiquidIngredients.Empty();
+	UpdateLiquidMeshPosition();
 }
