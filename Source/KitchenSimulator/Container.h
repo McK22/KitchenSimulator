@@ -118,7 +118,7 @@ protected:
 	void UpdateLiquidMesh() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Container content")
-	void PourLiquid(const float DeltaTime);
+	void PourLiquid(const float LiquidAmountToRemove);
 	
 	UFUNCTION(BlueprintCallable, Category = "Container content")
 	void DetachIngredients();

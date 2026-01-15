@@ -58,7 +58,7 @@ void ACookableContainer::CheckForCookedLiquids()
 	const float LiquidIngredientsFill = GetLiquidFill();
 	for (const auto& Recipe : CookingLiquidDataAsset->Recipes)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("CookingTime: %f"), LiquidsCookingTime));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("CookingTime: %f"), LiquidsCookingTime));
 		if (LiquidsCookingTime < Recipe.CookingTime)
 		{
 			continue;
@@ -81,6 +81,7 @@ void ACookableContainer::CheckForCookedLiquids()
 			const float IngredientAmount = LiquidIngredients[Ingredient.Ingredient].Amount / LiquidIngredientsFill;
 			if (IngredientAmount < Ingredient.Min || IngredientAmount > Ingredient.Max)
 			{
+				// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("IngredientAmount: %f"), IngredientAmount));
 				IngredientsOk = false;
 				break;
 			}

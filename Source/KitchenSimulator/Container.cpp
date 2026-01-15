@@ -51,7 +51,7 @@ void AContainer::Tick(float DeltaTime)
 
 	if (IsRotatedDown())
 	{
-		PourLiquid(DeltaTime);
+		PourLiquid(PourRate * DeltaTime);
 		DetachIngredients();
 	}
 }
@@ -227,9 +227,8 @@ void AContainer::UpdateLiquidMesh() const
 	}
 }
 
-void AContainer::PourLiquid(const float DeltaTime)
+void AContainer::PourLiquid(const float LiquidAmountToRemove)
 {
-	const float LiquidAmountToRemove = PourRate * DeltaTime;
 	const float TotalLiquidAmount = GetLiquidFill();
 	const float Ratio = LiquidAmountToRemove / TotalLiquidAmount;
 	if (AContainer* ContainerBelow = GetContainerBelow())
