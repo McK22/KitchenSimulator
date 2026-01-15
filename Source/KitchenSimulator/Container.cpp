@@ -40,7 +40,7 @@ void AContainer::BeginPlay()
 	}
 	
 	LiquidMaterialInstance = LiquidIngredientsMesh->CreateDynamicMaterialInstance(0);
-	UpdateLiquidMeshPosition();
+	UpdateLiquidMesh();
 	Super::BeginPlay();
 }
 
@@ -51,30 +51,8 @@ void AContainer::Tick(float DeltaTime)
 
 	if (IsRotatedDown())
 	{
-		const float LiquidAmountToRemove = PourRate * DeltaTime;
-		const float TotalLiquidAmount = GetLiquidFill();
-		const float Ratio = LiquidAmountToRemove / TotalLiquidAmount;
-		if (AContainer* ContainerBelow = GetContainerBelow())
-		{
-			for (auto& Liquid : LiquidIngredients)
-			{
-				float CurrentAmountToRemove = Liquid.Value.Amount * Ratio;
-				CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value.Amount);
-				Liquid.Value.Amount -= CurrentAmountToRemove;
-				ContainerBelow->AddLiquidIngredient(Liquid.Key, CurrentAmountToRemove);
-			}
-		}
-		else
-		{
-			for (auto& Liquid : LiquidIngredients)
-			{
-				float CurrentAmountToRemove = Liquid.Value.Amount * Ratio;
-				CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value.Amount);
-				Liquid.Value.Amount -= CurrentAmountToRemove;
-			}
-		}
-
-		UpdateLiquidMeshPosition();
+		PourLiquid(DeltaTime);
+		DetachIngredients();
 	}
 }
 
@@ -117,13 +95,7 @@ void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, float Amo
 	CookingTime = Amount / (Amount + AmountLiters);
 	Amount += AmountLiters;
 
-	LiquidMaterialInstance->SetScalarParameterValue(TotalLiquidParameterName, LiquidFill);
-	LiquidMaterialInstance->SetScalarParameterValue(
-		Ingredient->LiquidMaterialParameterName,
-		Amount
-	);
-
-	UpdateLiquidMeshPosition();
+	UpdateLiquidMesh();
 }
 
 float AContainer::GetLiquidFill() const
@@ -206,10 +178,8 @@ void AContainer::OnLiquidIngredientBeginOverlap(
 		const float CurrentFill = GetLiquidFill();
 		const float LiquidToTransfer = FMath::Min(CurrentFill, OtherContainer->CapacityLiters - OtherContainer->GetLiquidFill());
 		const float Ratio = LiquidToTransfer / CurrentFill;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("To pojawi się na ekranie!"));
 		for (auto& Liquid : LiquidIngredients)
 		{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("To pojawi się na ekranie!"));
 			float CurrentAmountToRemove = Liquid.Value.Amount * Ratio;
 			CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value.Amount);
 			Liquid.Value.Amount -= CurrentAmountToRemove;
@@ -224,7 +194,7 @@ bool AContainer::IsRotatedDown() const
 	return abs(Rotation.Pitch) > 90.0f || abs(Rotation.Roll) > 90.0f;
 }
 
-void AContainer::UpdateLiquidMeshPosition() const
+void AContainer::UpdateLiquidMesh() const
 {
 	const float LiquidFill = GetLiquidFill();
 	const bool Visible = LiquidFill > 1e-4;
@@ -241,4 +211,55 @@ void AContainer::UpdateLiquidMeshPosition() const
 
 	const FVector NewScale = FMath::Lerp(MinLiquidScale, MaxLiquidScale, Ratio);
 	LiquidIngredientsMesh->SetRelativeScale3D(NewScale);
+
+	if (LiquidFill < 1e-6)
+	{
+		return;
+	}
+	
+	LiquidMaterialInstance->SetScalarParameterValue(TotalLiquidParameterName, LiquidFill);
+	for (auto& Ingredient : LiquidIngredients)
+	{
+		LiquidMaterialInstance->SetScalarParameterValue(
+			Ingredient.Key->LiquidMaterialParameterName,
+			Ingredient.Value.Amount
+		);
+	}
+}
+
+void AContainer::PourLiquid(const float DeltaTime)
+{
+	const float LiquidAmountToRemove = PourRate * DeltaTime;
+	const float TotalLiquidAmount = GetLiquidFill();
+	const float Ratio = LiquidAmountToRemove / TotalLiquidAmount;
+	if (AContainer* ContainerBelow = GetContainerBelow())
+	{
+		for (auto& Liquid : LiquidIngredients)
+		{
+			float CurrentAmountToRemove = Liquid.Value.Amount * Ratio;
+			CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value.Amount);
+			Liquid.Value.Amount -= CurrentAmountToRemove;
+			ContainerBelow->AddLiquidIngredient(Liquid.Key, CurrentAmountToRemove);
+		}
+	}
+	else
+	{
+		for (auto& Liquid : LiquidIngredients)
+		{
+			float CurrentAmountToRemove = Liquid.Value.Amount * Ratio;
+			CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value.Amount);
+			Liquid.Value.Amount -= CurrentAmountToRemove;
+		}
+	}
+
+	UpdateLiquidMesh();
+}
+
+void AContainer::DetachIngredients()
+{
+	const FDetachmentTransformRules Rules(EDetachmentRule::KeepWorld, true);
+	for (const auto& Ingredient : Ingredients)
+	{
+		Ingredient->DetachFromActor(Rules);
+	}
 }

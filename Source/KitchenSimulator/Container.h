@@ -115,7 +115,13 @@ protected:
 	bool IsRotatedDown() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Container content")
-	void UpdateLiquidMeshPosition() const;
+	void UpdateLiquidMesh() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Container content")
+	void PourLiquid(const float DeltaTime);
+	
+	UFUNCTION(BlueprintCallable, Category = "Container content")
+	void DetachIngredients();
 
 public:	
 	// Called every frame

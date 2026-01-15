@@ -86,7 +86,6 @@ void ACookableContainer::CheckForCookedLiquids()
 			}
 		}
 
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Ok: %d"), IngredientsOk));
 		if (IngredientsOk)
 		{
 			SpawnIngredient(Recipe.ResultIngredient, Recipe.ResultIngredientState);
@@ -124,5 +123,5 @@ void ACookableContainer::SpawnIngredient(UIngredientDataAsset* IngredientDataAss
 	}
 	
 	LiquidIngredients.Empty();
-	UpdateLiquidMeshPosition();
+	UpdateLiquidMesh();
 }
