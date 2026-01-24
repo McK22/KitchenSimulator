@@ -63,10 +63,10 @@ protected:
 	TMap<UIngredientDataAsset*, FLiquidIngredientStruct> LiquidIngredients;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container content")
-	float MinLiquidHeight;
+	FVector MinLiquidLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container content")
-	float MaxLiquidHeight;
+	FVector MaxLiquidLocation;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Container content")
 	FVector MinLiquidScale = {1.0f, 1.0f, 1.0f};
