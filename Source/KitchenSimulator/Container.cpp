@@ -205,19 +205,6 @@ void AContainer::UpdateLiquidMesh() const
 	}
 
 	const float Ratio = LiquidFill / CapacityLiters;
-	// const FVector UpVector = LiquidIngredientsMesh->GetUpVector();
-	// const FVector Location = LiquidIngredientsMesh->GetRelativeLocation();
-	// const FVector MinLocation = { Location.X, Location.Y, MinLiquidHeight };
-	// const FVector MaxLocation = MinLocation + (MaxLiquidHeight - MinLiquidHeight) * UpVector;
-	// const FVector NewLocation = FMath::Lerp(MinLocation, MaxLocation, Ratio);
-	// Location.Z = FMath::Lerp(MinLiquidHeight, MaxLiquidHeight, Ratio);
-	// Location += UpVector;
-	// GEngine->AddOnScreenDebugMessage(
-	// 	-1, 
-	// 	10.f, 
-	// 	FColor::Orange, 
-	// 	FString::Printf(TEXT("X = %f, Y = %f, Z = %f"), UpVector.X, UpVector.Y, UpVector.Z)
-	// );
 	const FVector NewLocation = FMath::Lerp(MinLiquidLocation, MaxLiquidLocation, Ratio);	
 	LiquidIngredientsMesh->SetRelativeLocation(NewLocation);
 
