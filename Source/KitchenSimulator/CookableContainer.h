@@ -31,6 +31,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UCookingLiquidDataAsset> CookingLiquidDataAsset;
+	
+	UPROPERTY()
+	TObjectPtr<UIngredientDataAsset> WaterDataAsset;
 
 	UFUNCTION()
 	void CheckForCookedLiquids();

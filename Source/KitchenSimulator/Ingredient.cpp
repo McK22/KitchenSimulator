@@ -58,9 +58,16 @@ bool AIngredient::TryMakeTransition(EIngredientState NewState)
 }
 
 
-void AIngredient::Cook_Implementation(float DeltaTime)
+void AIngredient::Cook_Implementation(float DeltaTime, bool InWater)
 {
-	CookingTime += DeltaTime;
+	if (InWater)
+	{
+		CookingTime += DeltaTime;
+	}
+	else
+	{
+		FryingTime += DeltaTime;
+	}
 }
 
 void AIngredient::DisableCollision() const

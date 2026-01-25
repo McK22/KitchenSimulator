@@ -35,9 +35,9 @@ public:
 	bool TryMakeTransition(EIngredientState NewState);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "State")
-	void Cook(float DeltaTime);
+	void Cook(float DeltaTime, bool InWater);
 
-	void Cook_Implementation(float DeltaTime);
+	void Cook_Implementation(float DeltaTime, bool InWater);
 
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	void DisableCollision() const;
@@ -57,10 +57,13 @@ protected:
 	
 	// Cooking time in seconds
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
-	float MaxCookingTime = 600.0f;
+	float MaxFryingTime = 600.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	float CookingTime = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+	float FryingTime = 0.0f;
 
 	UFUNCTION(BlueprintCallable, Category = "State")
 	bool SetState(EIngredientState NewState);

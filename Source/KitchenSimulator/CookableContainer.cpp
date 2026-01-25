@@ -16,6 +16,9 @@ ACookableContainer::ACookableContainer()
 	//
 	static ConstructorHelpers::FObjectFinder<UCookingLiquidDataAsset> CookingLiquidDataAssetObject(TEXT("/Game/DataAssets/DA_CookingLiquid.DA_CookingLiquid"));
 	CookingLiquidDataAsset = CookingLiquidDataAssetObject.Object;
+	
+	static ConstructorHelpers::FObjectFinder<UIngredientDataAsset> WaterDataAssetObject(TEXT("/Game/DataAssets/Ingredients/DA_Water.DA_Water"));
+	WaterDataAsset = WaterDataAssetObject.Object;
 
 	static ConstructorHelpers::FClassFinder<AIngredient> IngredientBp(TEXT("/Game/Ingredients/BP_Ingredient.BP_Ingredient_C"));
 	IngredientBlueprintClass = IngredientBp.Class;
@@ -36,9 +39,15 @@ void ACookableContainer::Tick(float DeltaTime)
 
 void ACookableContainer::UpdateCooking(float DeltaTime)
 {
+	bool HasWaterToCook = false;
+	if (LiquidIngredients.Contains(WaterDataAsset))
+	{
+		HasWaterToCook = LiquidIngredients[WaterDataAsset].Amount >= 1.0f;
+	}
+	
 	for (AIngredient* Ingredient : Ingredients)
 	{
-		Ingredient->Cook(DeltaTime);
+		Ingredient->Cook(DeltaTime, HasWaterToCook);
 	}
 
 	for (auto& Entry : LiquidIngredients)
