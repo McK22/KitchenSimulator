@@ -47,6 +47,18 @@ void AFoodCounter::Serve()
 		return;
 	}
 
+	TArray<AActor*> AttachedActors;
+	Plate->GetAttachedActors(AttachedActors);
+	if (AttachedActors.Num() == 0)
+	{
+		return;
+	}
+	
+	for (auto& Ingredient : AttachedActors)
+	{
+		Ingredient->Destroy();
+	}
+	
 	Plate->Destroy();
 }
 
