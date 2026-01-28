@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "IngredientDataAsset.h"
+#include "RecipeDataAsset.h"
 #include "Engine/DataAsset.h"
 #include "MainDataAsset.generated.h"
 
@@ -17,5 +18,8 @@ class KITCHENSIMULATOR_API UMainDataAsset : public UPrimaryDataAsset
 public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ingredients")
-	TArray<UIngredientDataAsset*> IngredientDataAssets;
+	TArray<UIngredientDataAsset*> Ingredients;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<URecipeDataAsset*> Recipes;
 };
