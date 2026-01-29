@@ -17,4 +17,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	URecipeDataAsset* SelectedRecipe;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FText> Results;
 };

@@ -5,6 +5,8 @@
 #include "GameFramework/Actor.h"
 #include "Container.generated.h"
 
+class AFoodCounter;
+
 USTRUCT()
 struct FLiquidIngredientStruct
 {
@@ -127,4 +129,5 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	friend AFoodCounter;
 };

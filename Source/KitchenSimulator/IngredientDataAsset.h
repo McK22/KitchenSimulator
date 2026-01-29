@@ -13,7 +13,8 @@ enum class EIngredientState : uint8
 	Cracked UMETA(DisplayName="Cracked"),
 	Cut UMETA(DisplayName="Cut"),
 	Scrambled UMETA(DisplayName="Scrambled"),
-	Peeled UMETA(DisplayName="Peeled")
+	Peeled UMETA(DisplayName="Peeled"),
+	Liquid UMETA(DisplayName="Liquid")
 };
 
 USTRUCT(BlueprintType)
@@ -37,6 +38,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ingredient id")
 	int Id;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FText Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ingredient States")
 	TMap<EIngredientState, UStaticMesh*> Meshes;

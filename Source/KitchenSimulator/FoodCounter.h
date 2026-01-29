@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MyGameInstance.h"
 #include "Plate.h"
 #include "GameFramework/Actor.h"
 #include "FoodCounter.generated.h"
@@ -27,6 +28,22 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	APlate* Plate;
+
+	UPROPERTY()
+	TMap<EIngredientState, FString> IngredientStateMap = {
+		{ EIngredientState::Whole, "Bazowy" },
+		{ EIngredientState::Cut, "Pokrojony" },
+		{ EIngredientState::Cracked, "Rozbity" },
+		{ EIngredientState::Liquid, "Płynny" },
+		{ EIngredientState::Peeled, "Obrany" },
+		{ EIngredientState::Scrambled, "Jajecznica" }
+	};
+
+	UFUNCTION()
+	void SaveResults(UMyGameInstance* GameInstance) const;
+
+	UFUNCTION()
+	void SaveResultsForLiquids(UMyGameInstance* GameInstance, TArray<FIngredientInRecipe> LiquidIngredients) const;
 	
 	UFUNCTION()
 	void OnPlacingAreaBeginOverlap(

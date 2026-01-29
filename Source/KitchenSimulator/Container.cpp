@@ -65,8 +65,8 @@ void AContainer::AddIngredient(AIngredient* Ingredient)
 		AddIngredientArea->GetComponentLocation().Z
 	);
 	// Ingredient->DisableCollision();
-	Ingredient->SetActorLocation(NewLocation);
 	Ingredient->SetActorRotation({0.0, Ingredient->GetActorRotation().Yaw, 0.0});
+	Ingredient->SetActorLocation(NewLocation, true);
 
 	const FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules(
 		EAttachmentRule::KeepWorld,

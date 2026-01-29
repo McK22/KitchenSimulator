@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "Ingredient.generated.h"
 
+class AFoodCounter;
 class ACookableContainer;
 
 USTRUCT(BlueprintType)
@@ -72,5 +73,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-friend ACookableContainer;
+	friend ACookableContainer;
+	friend AFoodCounter;
 };
