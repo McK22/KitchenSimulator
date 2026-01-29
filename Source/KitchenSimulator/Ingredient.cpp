@@ -1,5 +1,7 @@
 #include "Ingredient.h"
 
+#include "MyGameInstance.h"
+
 // Sets default values
 AIngredient::AIngredient()
 {
@@ -60,13 +62,14 @@ bool AIngredient::TryMakeTransition(EIngredientState NewState)
 
 void AIngredient::Cook_Implementation(float DeltaTime, bool InWater)
 {
+	UMyGameInstance* GameInstance = Cast<UMyGameInstance>(GetGameInstance());
 	if (InWater)
 	{
-		CookingTime += DeltaTime;
+		CookingTime += DeltaTime * GameInstance->TimeMultiplier;
 	}
 	else
 	{
-		FryingTime += DeltaTime;
+		FryingTime += DeltaTime * GameInstance->TimeMultiplier;
 	}
 }
 

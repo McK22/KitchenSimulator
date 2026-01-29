@@ -26,6 +26,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* PlacingArea;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	UStaticMeshComponent* IngredientArea;
+
 	UPROPERTY(BlueprintReadWrite)
 	APlate* Plate;
 
@@ -38,6 +41,9 @@ protected:
 		{ EIngredientState::Peeled, "Obrany" },
 		{ EIngredientState::Scrambled, "Jajecznica" }
 	};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AIngredient*> Ingredients;
 
 	UFUNCTION()
 	void SaveResults(UMyGameInstance* GameInstance) const;
@@ -57,6 +63,24 @@ protected:
 	
 	UFUNCTION()
 	void OnPlacingAreaEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex
+	);
+
+	UFUNCTION()
+	void OnIngredientAreaBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
+	
+	UFUNCTION()
+	void OnIngredientAreaEndOverlap(
 		UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent,

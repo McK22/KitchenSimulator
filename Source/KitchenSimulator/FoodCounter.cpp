@@ -21,6 +21,11 @@ AFoodCounter::AFoodCounter()
 	PlacingArea->SetCollisionProfileName(TEXT("OverlapAll"));
 	PlacingArea->SetHiddenInGame(true);
 	PlacingArea->SetupAttachment(VisualMesh);
+
+	IngredientArea = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ingredient area"));
+	IngredientArea->SetCollisionProfileName(TEXT("OverlapAll"));
+	IngredientArea->SetHiddenInGame(true);
+	IngredientArea->SetupAttachment(VisualMesh);
 }
 
 // Called when the game starts or when spawned
@@ -30,6 +35,12 @@ void AFoodCounter::BeginPlay()
 	{
 		PlacingArea->OnComponentBeginOverlap.AddDynamic(this, &AFoodCounter::OnPlacingAreaBeginOverlap);
 		PlacingArea->OnComponentEndOverlap.AddDynamic(this, &AFoodCounter::OnPlacingAreaEndOverlap);
+	}
+
+	if (IngredientArea)
+	{
+		IngredientArea->OnComponentBeginOverlap.AddDynamic(this, &AFoodCounter::OnIngredientAreaBeginOverlap);
+		IngredientArea->OnComponentEndOverlap.AddDynamic(this, &AFoodCounter::OnIngredientAreaEndOverlap);
 	}
 	
 	Super::BeginPlay();
@@ -62,13 +73,12 @@ bool AFoodCounter::Serve()
 		SaveResults(GameInstance);
 	}
 	
+	Plate->Ingredients.Empty();
+	Plate->LiquidIngredients.Empty();
 	for (auto& Ingredient : AttachedActors)
 	{
 		Ingredient->Destroy();
 	}
-	
-	Plate->Destroy();
-	Plate = nullptr;
 
 	return true;
 }
@@ -85,9 +95,9 @@ void AFoodCounter::SaveResults(UMyGameInstance* GameInstance) const
 		}
 		
 		const AIngredient* IngredientOnPlate = nullptr;
-		for (auto& Ingredient : Plate->Ingredients)
+		for (auto& Ingredient : Ingredients)
 		{
-			if (Ingredient->IngredientData == IngredientInRecipe.IngredientDataAsset)
+			if (Ingredient->IngredientData->Name.EqualTo(IngredientInRecipe.IngredientDataAsset->Name))
 			{
 				IngredientOnPlate = Ingredient;
 				break;
@@ -156,12 +166,12 @@ void AFoodCounter::SaveResults(UMyGameInstance* GameInstance) const
 		GameInstance->Results.Add(FText::FromString(s));
 	}
 	
-	for (auto& OnPlate : Plate->Ingredients)
+	for (auto& OnPlate : Ingredients)
 	{
 		bool IsInRecipe = false;
 		for (auto& InRecipe : GameInstance->SelectedRecipe->Ingredients)
 		{
-			if (InRecipe.State != EIngredientState::Liquid && OnPlate->IngredientData == InRecipe.IngredientDataAsset)
+			if (InRecipe.State != EIngredientState::Liquid && OnPlate->IngredientData->Name.EqualTo(InRecipe.IngredientDataAsset->Name))
 			{
 				IsInRecipe = true;
 				break;
@@ -214,7 +224,7 @@ void AFoodCounter::SaveResultsForLiquids(UMyGameInstance* GameInstance, TArray<F
 		bool IsInRecipe = false;
 		for (auto& InRecipe : LiquidIngredients)
 		{
-			if (OnPlate.Key == InRecipe.IngredientDataAsset)
+			if (OnPlate.Key->Name.EqualTo(InRecipe.IngredientDataAsset->Name))
 			{
 				IsInRecipe = true;
 				break;
@@ -279,4 +289,38 @@ void AFoodCounter::OnPlacingAreaEndOverlap(
 	{
 		Plate = nullptr;
 	}
+}
+
+void AFoodCounter::OnIngredientAreaBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult
+)
+{
+	AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
+	if (!Ingredient)
+	{
+		return;
+	}
+
+	Ingredients.Add(Ingredient);
+}
+	
+void AFoodCounter::OnIngredientAreaEndOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComponent,
+	int32 OtherBodyIndex
+)
+{
+		AIngredient* Ingredient = Cast<AIngredient>(OtherActor);
+    	if (!Ingredient)
+    	{
+    		return;
+    	}
+    
+    	Ingredients.Remove(Ingredient);
 }

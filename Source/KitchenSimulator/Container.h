@@ -23,7 +23,7 @@ public:
 	void AddIngredient(AIngredient* Ingredient);
 
 	UFUNCTION(BlueprintCallable, Category = "Container content")
-	void AddLiquidIngredient(UIngredientDataAsset* Ingredient, float AmountLiters);
+	void AddLiquidIngredient(UIngredientDataAsset* Ingredient, float AmountLiters, float CookingTime = 0.0f);
 
 	UFUNCTION(BlueprintPure, Category = "Components")
 	UStaticMeshComponent* GetVisualMesh() const { return VisualMesh; }

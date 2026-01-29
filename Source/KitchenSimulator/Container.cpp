@@ -77,7 +77,7 @@ void AContainer::AddIngredient(AIngredient* Ingredient)
 	Ingredient->AttachToActor(this, AttachmentRules, NAME_None);
 }
 
-void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, float AmountLiters)
+void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, float AmountLiters, float NewCookingTime)
 {
 	const float LiquidFill = GetLiquidFill();
 	AmountLiters = FMath::Min(CapacityLiters - LiquidFill, AmountLiters);
@@ -92,8 +92,8 @@ void AContainer::AddLiquidIngredient(UIngredientDataAsset* Ingredient, float Amo
 	}
 
 	auto& [Amount, CookingTime] = LiquidIngredients[Ingredient];
-	CookingTime = Amount / (Amount + AmountLiters);
 	Amount += AmountLiters;
+	CookingTime = (NewCookingTime * AmountLiters + CookingTime * (Amount - AmountLiters)) / Amount;
 
 	UpdateLiquidMesh();
 }

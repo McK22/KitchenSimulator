@@ -20,4 +20,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FText> Results;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TimeMultiplier = 1.0f;
 };

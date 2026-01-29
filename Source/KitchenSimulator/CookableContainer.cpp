@@ -3,6 +3,8 @@
 
 #include "CookableContainer.h"
 
+#include "MyGameInstance.h"
+
 // Sets default values
 ACookableContainer::ACookableContainer()
 {
@@ -50,9 +52,10 @@ void ACookableContainer::UpdateCooking(float DeltaTime)
 		Ingredient->Cook(DeltaTime, HasWaterToCook);
 	}
 
+	UMyGameInstance* GameInstance = Cast<UMyGameInstance>(GetGameInstance());
 	for (auto& Entry : LiquidIngredients)
 	{
-		Entry.Value.CookingTime += DeltaTime;
+		Entry.Value.CookingTime += DeltaTime * GameInstance->TimeMultiplier;
 	}
 	
 	if (GetLiquidFill() > 0.0f)
