@@ -237,7 +237,7 @@ void AContainer::PourLiquid(const float LiquidAmountToRemove)
 			float CurrentAmountToRemove = Liquid.Value.Amount * Ratio;
 			CurrentAmountToRemove = FMath::Min(CurrentAmountToRemove, Liquid.Value.Amount);
 			Liquid.Value.Amount -= CurrentAmountToRemove;
-			ContainerBelow->AddLiquidIngredient(Liquid.Key, CurrentAmountToRemove);
+			ContainerBelow->AddLiquidIngredient(Liquid.Key, CurrentAmountToRemove, Liquid.Value.CookingTime);
 		}
 	}
 	else
