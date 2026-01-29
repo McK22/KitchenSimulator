@@ -132,6 +132,11 @@ void ACookableContainer::SpawnIngredient(UIngredientDataAsset* IngredientDataAss
 		AddIngredient(Ingredient);
 	}
 	
+	for (auto& Entry : LiquidIngredients)
+	{
+		Ingredient->LiquidComponents.Add(Entry.Key, Entry.Value);
+	}
+	
 	LiquidIngredients.Empty();
 	UpdateLiquidMesh();
 }

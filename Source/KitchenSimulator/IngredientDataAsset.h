@@ -27,6 +27,18 @@ struct FIngredientTransition
 	TSet<EIngredientState> AllowedStates;
 };
 
+USTRUCT()
+struct FLiquidIngredientStruct
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere)
+	float Amount = 0.0f;
+	
+	UPROPERTY(EditAnywhere)
+	float CookingTime = 0.0f;
+};
+
 /**
  * 
  */

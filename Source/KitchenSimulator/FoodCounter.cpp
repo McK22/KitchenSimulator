@@ -42,18 +42,18 @@ void AFoodCounter::Tick(float DeltaTime)
 
 }
 
-void AFoodCounter::Serve()
+bool AFoodCounter::Serve()
 {
 	if (!Plate)
 	{
-		return;
+		return false;
 	}
 
 	TArray<AActor*> AttachedActors;
 	Plate->GetAttachedActors(AttachedActors);
 	if (AttachedActors.Num() == 0)
 	{
-		return;
+		return false;
 	}
 
 	UMyGameInstance* GameInstance = Cast<UMyGameInstance>(GetGameInstance());
@@ -69,6 +69,8 @@ void AFoodCounter::Serve()
 	
 	Plate->Destroy();
 	Plate = nullptr;
+
+	return true;
 }
 
 void AFoodCounter::SaveResults(UMyGameInstance* GameInstance) const
@@ -128,6 +130,26 @@ void AFoodCounter::SaveResults(UMyGameInstance* GameInstance) const
 					static_cast<int>(ceil(IngredientInRecipe.FryingTime)) / 60,
 					static_cast<int>(ceil(IngredientInRecipe.FryingTime)) % 60
 				);
+			}
+
+			if (IngredientInRecipe.LiquidComponents.Num() > 0)
+			{
+				s += "\n\tSkladniki:";
+				for (auto& LiquidComponent : IngredientInRecipe.LiquidComponents)
+				{
+					if (!IngredientOnPlate->LiquidComponents.Contains(LiquidComponent.Key))
+					{
+						s += "\n\t\t Brakujacy skladnik: " + LiquidComponent.Key->Name.ToString();
+						continue;
+					}
+					
+					s += FString::Printf(
+						TEXT("\n\t\t%s %.2f/%.2fml"),
+						*LiquidComponent.Key->Name.ToString(),
+						IngredientOnPlate->LiquidComponents[LiquidComponent.Key].Amount * 1000.0f,
+						LiquidComponent.Value.Amount * 1000.0f
+					);
+				}
 			}
 		}
 		

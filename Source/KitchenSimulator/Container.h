@@ -7,14 +7,6 @@
 
 class AFoodCounter;
 
-USTRUCT()
-struct FLiquidIngredientStruct
-{
-	GENERATED_BODY()
-	float Amount = 0.0f;
-	float CookingTime = 0.0f;
-};
-
 UCLASS()
 class KITCHENSIMULATOR_API AContainer : public AActor
 {

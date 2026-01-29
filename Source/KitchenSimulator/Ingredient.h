@@ -65,6 +65,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
 	float FryingTime = 0.0f;
+	
+	UPROPERTY(EditAnywhere)
+	TMap<UIngredientDataAsset*, FLiquidIngredientStruct> LiquidComponents;
 
 	UFUNCTION(BlueprintCallable, Category = "State")
 	bool SetState(EIngredientState NewState);

@@ -29,6 +29,9 @@ struct FIngredientInRecipe
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Count;
+
+	UPROPERTY(EditAnywhere)
+	TMap<UIngredientDataAsset*, FLiquidIngredientStruct> LiquidComponents;
 };
 
 /**

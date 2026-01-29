@@ -15,7 +15,7 @@ public:
 	AFoodCounter();
 
 	UFUNCTION(BlueprintCallable)
-	void Serve();
+	bool Serve();
 
 protected:
 	virtual void BeginPlay() override;
