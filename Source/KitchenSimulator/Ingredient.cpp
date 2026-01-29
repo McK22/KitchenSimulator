@@ -46,7 +46,7 @@ bool AIngredient::SetState(EIngredientState NewState)
 	return true;
 }
 
-bool AIngredient::TryMakeTransition(EIngredientState NewState)
+bool AIngredient::TryMakeTransition_Implementation(EIngredientState NewState)
 {
 	if (!IngredientData
 		|| !IngredientData->Transitions.Contains(State)
@@ -58,7 +58,6 @@ bool AIngredient::TryMakeTransition(EIngredientState NewState)
 	SetState(NewState);
 	return true;
 }
-
 
 void AIngredient::Cook_Implementation(float DeltaTime, bool InWater)
 {

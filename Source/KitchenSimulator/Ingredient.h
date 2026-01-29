@@ -32,10 +32,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data", meta=(ExposeOnSpawn="true"))
 	UIngredientDataAsset* IngredientData;
 	
-	UFUNCTION(BlueprintCallable, Category = "State")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "State")
 	bool TryMakeTransition(EIngredientState NewState);
 
-	UFUNCTION(BlueprintNativeEvent, Category = "State")
+	bool TryMakeTransition_Implementation(EIngredientState NewState);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "State")
 	void Cook(float DeltaTime, bool InWater);
 
 	void Cook_Implementation(float DeltaTime, bool InWater);

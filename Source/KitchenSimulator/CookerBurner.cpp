@@ -45,7 +45,7 @@ void UCookerBurner::OnBurnerBeginOverlap(
 	)
 {
 	ACookableContainer* OverlappingContainer = Cast<ACookableContainer>(OtherActor);
-	if (!OverlappingContainer || Container)
+	if (!OverlappingContainer || (Container && Container != OverlappingContainer))
 	{
 		return;
 	}
